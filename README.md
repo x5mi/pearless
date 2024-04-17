@@ -1,7 +1,7 @@
 ## Commands
 
+- `/welcomemessage`: Setup welcome message for your server
 - `/setupwelcome`: Initiates the process of setting up the welcome message for your server.
-- `/welcomemessage`: edit welcome message for your server
 
 ## Welcome Message Setup Process
 

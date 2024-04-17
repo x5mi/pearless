@@ -5,8 +5,8 @@
 
 ## Welcome Message Setup Process
 
-1. **Initiate Setup**: Start by using the `/setupwelcome` command.
-2. **Input Details**: USe `/welcomemessage` Enter the required details such as title, description, image URL, etc.
+1. **Input Details**: USe `/welcomemessage` Enter the required details such as title, description, image URL, etc. 
+2. **Initiate Setup**: Start by using the `/setupwelcome` command.
 3. **Save Details**: The bot will save the provided details for the welcome message.
 4. **Confirmation**: You will receive a confirmation message once the details are saved successfully.
 

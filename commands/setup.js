@@ -58,13 +58,14 @@ module.exports = {
                 serverId: interaction.guildId,
                 welcomeChannelId: welcomeChannel.id
             };
-            console.log(`{
+            console.log(`\x1b[33m{ 
                 "${interaction.guildId}": {
                   "serverName": "${setupData[interaction.guildId].serverName}",
                   "serverId": "${setupData[interaction.guildId].serverId}",
                   "welcomeChannelId": "${setupData[interaction.guildId].welcomeChannelId}"
                 }
               }`);
+            
               
               
 
@@ -123,7 +124,7 @@ module.exports = {
             
             const processedMessageData = {
                 ...messageData,
-                // REMOVE BELOW IF YOU WANT TO USE CUSTOM ATTRIBUTES 
+                // REMOVE BELOW ATTRIBUTE IN ORDER TO LOAD MESSAGE.JSON INFO 
                 thumbnail: interaction.guild.iconURL(),
                 authorName: member.displayName,
                 authorURL: member.user.displayAvatarURL(),

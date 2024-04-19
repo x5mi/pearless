@@ -67,60 +67,67 @@ fs.readdir(config.commandsDir, (err, files) => {
 
 client.on('guildMemberAdd', async member => {
   try {
+      const setupFilePath = path.join(__dirname, 'setup.json');
+      const setupData = JSON.parse(fs.readFileSync(setupFilePath, 'utf8'));
 
-    const setupFilePath = path.join(__dirname, 'setup.json');
-    const setupData = JSON.parse(fs.readFileSync(setupFilePath, 'utf8'));
+      const guildId = member.guild.id;
+      const guildSetupData = setupData[guildId];
+      if (!guildSetupData || !guildSetupData.welcomeChannelId) {
+          console.error('Welcome channel data not found or invalid.');
+          return;
+      }
 
-    const guildId = member.guild.id;
-    const guildSetupData = setupData[guildId];
-    if (!guildSetupData || !guildSetupData.welcomeChannelId) {
-      console.error('Welcome channel data not found or invalid.');
-      return;
-    }
+      const welcomeChannelId = guildSetupData.welcomeChannelId;
+      console.log('Welcome channel ID:', welcomeChannelId);
 
-    const welcomeChannelId = guildSetupData.welcomeChannelId;
-    console.log('Welcome channel ID:', welcomeChannelId);
+      const welcomeChannel = await client.channels.fetch(welcomeChannelId);
+      if (!welcomeChannel) {
+          console.error('Welcome channel not found.');
+          return;
+      }
 
+      console.log('Welcome channel type:', welcomeChannel.type);
 
-    const welcomeChannel = await client.channels.fetch(welcomeChannelId);
-    if (!welcomeChannel) {
-      console.error('Welcome channel not found.');
-      return;
-    }
+      const messageFilePath = path.join(__dirname, 'message.json');
+      const messageData = JSON.parse(fs.readFileSync(messageFilePath, 'utf8'));
 
-    console.log('Welcome channel type:', welcomeChannel.type);
+      if (!messageData) {
+          console.error('Message details not found in message.json');
+          return;
+      }
 
+      const processedMessageData = {
+          ...messageData,
+          // REMOVE BELOW ATTRIBUTE IN ORDER TO LOAD MESSAGE.JSON INFO 
+          thumbnail: member.guild.iconURL(),
+          authorName: member.displayName,
+          authorURL: member.user.displayAvatarURL(),
+          authorIcon: member.user.displayAvatarURL()
+      };
 
-    const messageFilePath = path.join(__dirname, 'message.json');
-    const messageData = JSON.parse(fs.readFileSync(messageFilePath, 'utf8'));
+      const { title, description, image, footer, color, footerURL, thumbnail, authorName, authorURL, authorIcon } = processedMessageData;
 
-    if (!messageData) {
-      console.error('Message details not found in message.json');
-      return;
-    }
+      const welcomeMessage = `Hello ${member}!`;
 
+      const welcomeMessageDm = `💝 This message has been sent from **${member.guild.name}!**`;
+      const embed = new EmbedBuilder()
+          .setTitle(title)
+          .setDescription(description)
+          .setImage(image)
+          .setColor(color)
+          .setTimestamp()
+          .setFooter({ text: footer, iconURL: footerURL })
+          .setThumbnail(thumbnail)
+          .setAuthor({ name: authorName, iconURL: authorIcon, url: authorURL });
 
-    const { title, description, image, footer, color, footerURL, thumbnail, authorName, authorURL, authorIcon } = messageData;
-
-            const welcomeMessage = `Hello ${member}!`;
-            const welcomeMessageDm = `💝 This message has been sent from** ${member.guild.name}!**`;
-            const embed = new EmbedBuilder()
-            .setTitle(title)
-            .setDescription(description)
-            .setImage(image)
-            .setColor(color)
-            .setTimestamp()
-            .setFooter({ text: footer, iconURL: footerURL }) 
-            .setThumbnail(thumbnail) 
-            .setAuthor({ name: authorName, iconURL: authorIcon, url: authorURL }); 
-
-
-    await welcomeChannel.send({ content: welcomeMessage , embeds: [embed] });
-    await member.send({ content: welcomeMessageDm , embeds: [embed] });
+      await welcomeChannel.send({ content: welcomeMessage, embeds: [embed] });
+      //REMOVE BELOW LINE IF YOU DONT WANT DM MESSAGE
+      await member.send({ content: welcomeMessageDm, embeds: [embed] });
   } catch (error) {
-    console.error('Error sending welcome message:', error);
+      console.error('Error sending welcome message:', error);
   }
 });
+
 
 
 

@@ -98,7 +98,7 @@ module.exports = {
             collector.on('collect', async buttonInteraction => {
                 if (buttonInteraction.customId === 'send_welcome_test') {
                     const member = buttonInteraction.member;
-                    await this.sendWelcomeMessage(member);
+                    await this.sendWelcomeMessage(interaction, member); 
                     buttonInteraction.deferUpdate();
                 }
             });
@@ -107,7 +107,7 @@ module.exports = {
             await interaction.reply({ content: 'An error occurred while setting up welcome messages.', ephemeral: true });
         }
     },
-    async sendWelcomeMessage(member, footerIconURL) {
+    async sendWelcomeMessage(interaction, member, footerIconURL) {
         try {
         
             const messageFilePath = path.join(__dirname, '..', 'message.json');
@@ -120,23 +120,32 @@ module.exports = {
                 console.error('Message details not found in message.json');
                 return;
             }
-    
-           
-            const { title, description, image, footer, color, footerURL, thumbnail, authorName, authorURL, authorIcon } = messageData;
-
+            
+            const processedMessageData = {
+                ...messageData,
+                // REMOVE BELOW IF YOU WANT TO USE CUSTOM ATTRIBUTES 
+                thumbnail: interaction.guild.iconURL(),
+                authorName: member.displayName,
+                authorURL: member.user.displayAvatarURL(),
+                authorIcon: member.user.displayAvatarURL()
+                
+            };
+            
+            const { title, description, image, footer, color, footerURL, thumbnail, authorName, authorURL, authorIcon } = processedMessageData;
+            
             const welcomeMessage = `Hello ${member}!`;
-            const welcomeMessageDm = `💝 This message has been sent from** ${member.guild.name}!**`;
-
+            const welcomeMessageDm = `💝 This message has been sent from **${member.guild.name}!**`;
+            
             const embed = new EmbedBuilder()
-            .setTitle(title)
-            .setDescription(description)
-            .setImage(image)
-            .setColor(color)
-            .setTimestamp()
-            .setFooter({ text: footer, iconURL: footerURL }) 
-            .setThumbnail(thumbnail) 
-            .setAuthor({ name: authorName, iconURL: authorIcon, url: authorURL }); 
-
+                .setTitle(title)
+                .setDescription(description)
+                .setImage(image)
+                .setColor(color)
+                .setTimestamp()
+                .setFooter({ text: footer, iconURL: footerURL }) 
+                .setThumbnail(thumbnail) 
+                .setAuthor({ name: authorName, iconURL: authorIcon, url: authorURL });
+            
     
  
             const guildId = member.guild.id;

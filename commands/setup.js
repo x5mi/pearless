@@ -58,6 +58,15 @@ module.exports = {
                 serverId: interaction.guildId,
                 welcomeChannelId: welcomeChannel.id
             };
+            console.log(`{
+                "${interaction.guildId}": {
+                  "serverName": "${setupData[interaction.guildId].serverName}",
+                  "serverId": "${setupData[interaction.guildId].serverId}",
+                  "welcomeChannelId": "${setupData[interaction.guildId].welcomeChannelId}"
+                }
+              }`);
+              
+              
 
 
             fs.writeFile('./setup.json', JSON.stringify(setupData, null, 2), err => {
